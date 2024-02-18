@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muzioo - Music Lyrics</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for icons (optional) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="th.jpeg    " type="image/x-icon">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Muzioo</h1>
+            <nav>
+                <!-- <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Songs</a></li>
+                    <li><a href="#">Artists</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul> -->
+                <div class="search-bar">
+                    <form id="form"> <!-- Add form element here -->
+                        <input type="text" id="query" placeholder="Search...">
+                        <button id="searchButton"><i class="fas fa-search"></i></button>
+                    </form> <!-- Close form element -->
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>Welcome to Muzioo</h2>
+                <p>Discover and explore your favorite music lyrics.</p>
+                <a href="#" class="btn" id="exploreButton">Explore</a>
+            </div>
+        </section>
+
+        <section class="featured-songs">
+            <div class="container" id="section">
+                <div class="song-card" id="featuredSong">
+                    <!-- <img src="song1.jpg" alt="Song 1"> -->
+                    <h3 id="songTitle" class="con"></h3>
+                    <p id="artistName"></p>
+                    <p class="lyrics-placeholder" id="lyricsPlaceholder"></p>
+                    <a href="#" id="viewLyricsButton" id="exploreButton"></a>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Muzioo. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="lyricsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const SEARCHAPI = "https://api.lyrics.ovh/suggest/";
+
+        const main = document.getElementById("section");
+        const form = document.getElementById("form"); // Add form element reference
+        const search = document.getElementById("query");
+
+        function returnSongs(url) {
+            fetch(url)
+                .then(res => res.json())
+                .then(function (data) {
+                    console.log(data.data);
+                    data.data.forEach(song => {
+                        const div_row = document.createElement('div');
+                        div_row.setAttribute('class', 'row');
+
+                        const div_column = document.createElement('div');
+                        div_column.setAttribute('class', 'songTitle');
+
+                        const div_card = document.createElement('div');
+                        div_card.setAttribute('class', 'song-card');
+
+                        const title = document.createElement('h3');
+                        title.textContent = `${song.title} - ${song.artist.name}`;
+
+                        const lyricsButton = document.createElement('button');
+                        lyricsButton.textContent = "View Lyrics";
+                        lyricsButton.addEventListener('click', () => {
+                            displayLyrics(song.artist.name, song.title);
+                        });
+
+                        div_card.appendChild(title);
+                        div_card.appendChild(lyricsButton);
+                        div_column.appendChild(div_card);
+                        div_row.appendChild(div_column);
+
+                        main.appendChild(div_row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        function displayLyrics(artist, title) {
+            const apiUrl = `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`;
+            fetch(apiUrl)
+                .then(res => res.json())
+                .then(function (data) {
+                    if (data.lyrics) {
+                        const lyricsContainer = document.getElementById("lyricsContainer");
+                        lyricsContainer.innerHTML = `<pre>${data.lyrics}</pre>`;
+                        modal.style.display = "block";
+                    } else {
+                        alert('Lyrics not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching lyrics:', error);
+                    alert('Error fetching lyrics');
+                });
+        }
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            main.innerHTML = '';
+
+            const searchItem = search.value.trim();
+
+            if (searchItem) {
+                const searchUrl = SEARCHAPI + encodeURIComponent(searchItem);
+                returnSongs(searchUrl);
+                search.value = "";
+            }
+        });
+
+        // Get the modal
+        const modal = document.getElementById("myModal");
+
+        // Get the <span> element that closes the modal
+        const span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        // Get the Explore button
+        const exploreButton = document.getElementById("exploreButton");
+
+        // Add an event listener to the Explore button
+        exploreButton.addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent the default action of the anchor tag
+
+            // Scroll to the featured-songs section
+            document.querySelector('.featured-songs').scrollIntoView({
+                behavior: 'smooth' // Optional: Add smooth scrolling effect
+            });
+        });
+
+    </script>
+</body>
+
+</html>
