@@ -1,8 +1,4 @@
-Here’s a `README.md` file for your **Muzioo - Music Lyrics Search App**, based on the provided HTML, CSS, and JavaScript:
 
----
-
-```markdown
 # 🎵 Muzioo - Music Lyrics Search App
 
 Muzioo is a simple and elegant web application that lets users search for songs and view their lyrics in real time. It uses the [lyrics.ovh API](https://lyricsovh.docs.apiary.io/) to fetch song data and lyrics, offering an immersive experience for music lovers.
@@ -72,8 +68,3 @@ This project is licensed under the MIT License.
 ---
 
 Made with ❤️ by [Akshay Karthick](https://www.linkedin.com/in/akshay-karthick-32817a249/)
-```
-
----
-
-Would you like me to generate a version with clickable badges (like GitHub stars or tech tags), or help you write a deployment guide (e.g., for GitHub Pages or Vercel)?
