@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="styles.css">
     <!-- Font Awesome for icons (optional) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="icon" href="th.jpeg    " type="image/x-icon">
+    <link rel="icon" href="th.jpeg" type="image/x-icon">
+    <meta name="description" content="Search and discover lyrics for your favorite songs">
 </head>
 
 <body>
@@ -16,12 +17,14 @@
         <div class="container">
             <h1>Muzioo</h1>
             <nav>
-                
                 <div class="search-bar">
-                    <form id="form"> <!-- Add form element here -->
-                        <input type="text" id="query" placeholder="Search...">
-                        <button id="searchButton"><i class="fas fa-search"></i></button>
-                    </form> 
+                    <form id="form">
+                        <input type="text" id="query" placeholder="Search for songs or artists..." aria-label="Search songs">
+                        <button type="submit" id="searchButton" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
             </nav>
         </div>
     </header>
@@ -31,20 +34,15 @@
             <div class="container">
                 <h2>Welcome to Muzioo</h2>
                 <p>Discover and explore your favorite music lyrics.</p>
-                <a href="#" class="btn" id="exploreButton">Explore</a>
+                <a href="#featured-songs" class="btn" id="exploreButton">Explore Songs</a>
             </div>
         </section>
 
-        <section class="featured-songs">
-            <div class="container" id="section">
-                <div class="song-card" id="featuredSong">
-                    <!-- <img src="song1.jpg" alt="Song 1"> -->
-                    <h3 id="songTitle" class="con"></h3>
-                    <p id="artistName"></p>
-                    <p class="lyrics-placeholder" id="lyricsPlaceholder"></p>
-                    <a href="#" id="viewLyricsButton" id="exploreButton"></a>
+        <section id="featured-songs" class="featured-songs">
+            <div class="container">
+                <div id="section">
+                    <!-- Song cards will be dynamically added here -->
                 </div>
-
             </div>
         </section>
     </main>
@@ -53,16 +51,23 @@
         <div class="container">
             <p>&copy; 2024 akshaykarthicks. All rights reserved.</p>
             <div class="social-icons">
-                <a href="https://www.linkedin.com/in/akshay-karthick-32817a249/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/akshaykarthicks"><i class="fab fa-github"></i></a>
-                <a href="https://www.instagram.com/_akshayy_153/?igsh=YzAwZjE1ZTI0Zg%3D%3D"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/akshay-karthick-32817a249/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://github.com/akshaykarthicks" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.instagram.com/_akshayy_153/?igsh=YzAwZjE1ZTI0Zg%3D%3D" target="_blank" rel="noopener noreferrer" aria-label="Instagram Profile">
+                    <i class="fab fa-instagram"></i>
+                </a>
             </div>
         </div>
     </footer>
 
-    <div id="myModal" class="modal">
+    <div id="myModal" class="modal" role="dialog" aria-labelledby="lyricsTitle">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" aria-label="Close lyrics">&times;</span>
+            <h2 id="lyricsTitle" class="visually-hidden">Song Lyrics</h2>
             <div id="lyricsContainer"></div>
         </div>
     </div>
@@ -79,40 +84,44 @@
                 .then(res => res.json())
                 .then(function (data) {
                     console.log(data.data);
+                    main.innerHTML = ''; // Clear previous results
                     data.data.forEach(song => {
                         const div_row = document.createElement('div');
-                        div_row.setAttribute('class', 'row');
-
-                        const div_column = document.createElement('div');
-                        div_column.setAttribute('class', 'songTitle');
-
-                        const div_card = document.createElement('div');
-                        div_card.setAttribute('class', 'song-card');
+                        div_row.setAttribute('class', 'song-card');
 
                         const title = document.createElement('h3');
-                        title.textContent = `${song.title} - ${song.artist.name}`;
+                        title.textContent = `${song.title}`;
+                        title.setAttribute('aria-label', `Song: ${song.title} by ${song.artist.name}`);
+
+                        const artist = document.createElement('p');
+                        artist.textContent = `Artist: ${song.artist.name}`;
+                        artist.setAttribute('aria-label', `Artist: ${song.artist.name}`);
 
                         const lyricsButton = document.createElement('button');
                         lyricsButton.textContent = "View Lyrics";
+                        lyricsButton.setAttribute('aria-label', `View lyrics for ${song.title} by ${song.artist.name}`);
                         lyricsButton.addEventListener('click', () => {
                             displayLyrics(song.artist.name, song.title);
                         });
 
-                        div_card.appendChild(title);
-                        div_card.appendChild(lyricsButton);
-                        div_column.appendChild(div_card);
-                        div_row.appendChild(div_column);
-
+                        div_row.appendChild(title);
+                        div_row.appendChild(artist);
+                        div_row.appendChild(lyricsButton);
                         main.appendChild(div_row);
                     });
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
+                    main.innerHTML = '<div class="error-message">Error loading songs. Please try again.</div>';
                 });
         }
 
         function displayLyrics(artist, title) {
             const apiUrl = `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`;
+            const lyricsTitle = document.getElementById('lyricsTitle');
+            lyricsTitle.textContent = `${title} - ${artist}`;
+            lyricsTitle.classList.remove('visually-hidden');
+            
             fetch(apiUrl)
                 .then(res => res.json())
                 .then(function (data) {
@@ -126,7 +135,7 @@
                 })
                 .catch(error => {
                     console.error('Error fetching lyrics:', error);
-                    alert('Error fetching lyrics');
+                    alert('Error fetching lyrics. Please try again.');
                 });
         }
 
