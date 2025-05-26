@@ -4,13 +4,9 @@
 Muzioo is a simple and elegant web application that lets users search for songs and view their lyrics in real time. It uses the [lyrics.ovh API](https://lyricsovh.docs.apiary.io/) to fetch song data and lyrics, offering an immersive experience for music lovers.
 
 ## 🌐 Live Demo
+(https://akshaykarthicks.github.io/Music_lyrics_api/)
 
-*(Add your live site link here, if hosted)*
 
-## 📸 Preview
-
-![Muzioo Screenshot]
---> Screenshot 2024-02-18 165305.png
 
 ## 🚀 Features
 
